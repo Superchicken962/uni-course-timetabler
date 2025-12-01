@@ -1,0 +1,68 @@
+[Course] Security foundations:
+
+FORUM: 
+- [28367] Monday 10am - 12pm
+
+PRACTICAL:
+- [28368] Friday 4pm - 7pm
+- [28369] Tuesday 8am - 11am
+- [28370] Monday 4pm - 7pm
+- [28371] Wednesday 8am - 11am
+- [28372] Wednesday 2pm - 5pm
+- [28373] Thursday 9am - 12pm
+
+
+[Course] Cloud Platforms:
+
+PRACTICAL:
+- [25933] Tuesday 2pm - 4pm
+- [25934] Friday 10am - 12pm
+- [25935] Wednesday 8am - 10am
+- [25936] Monday 11am - 1pm
+- [25937] Wednesday 9am - 11am
+- [25938] Tuesday 9am - 11am
+- [25939] Friday 4pm - 6pm
+- [25940] Monday 11am - 1pm
+- [22482] Monday 4pm - 6pm
+- [22483] Monday 9am - 11am
+- [22484] Friday 8am - 10am
+- [22485] Tuesday 8am - 10am
+- [22486] Thursday 5pm - 7pm
+
+SEMINAR:
+- [25941] Wednesday 2pm - 4pm
+- [25942] Wednesday 10am - 12pm
+- [22487] Thursday 1pm - 3pm
+
+
+[Course] Unstructured Data:
+
+PRACTICAL:
+- [24304] Thursday 2pm - 4pm
+- [24305] Thursday 11am - 1pm
+- [24306] Tuesday 11am - 1pm
+- [24307] Tuesday 1pm - 3pm
+- [24308] Wednesday 2pm - 4pm
+
+WORKSHOP:
+- [24309] Monday 6pm - 8pm
+- [24310] Monday 3pm - 5pm
+
+
+[Course] Design Patterns with C++:
+
+LECTURE:
+- [23930] Thursday 9am - 11am
+
+PRACTICAL:
+- [23931] Thursday 4pm - 5pm
+- [23932] Friday 9am - 10am
+- [23933] Monday 11am - 12pm
+- [23934] Monday 10am - 11am
+- [23935] Monday 9am - 10am
+- [23936] Friday 11am - 12pm
+
+WORKSHOP:
+- [23937] Wednesday 3pm - 5pm
+- [23938] Monday 2pm - 4pm
+- [23939] Thursday 1pm - 3pm

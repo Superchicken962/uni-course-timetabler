@@ -1,0 +1,19 @@
+{
+  "name": "uni-course-timetabler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Superchicken962/uni-course-timetabler.git"
+  },
+  "author": "mark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Superchicken962/uni-course-timetabler/issues"
+  },
+  "homepage": "https://github.com/Superchicken962/uni-course-timetabler#readme"
+}
