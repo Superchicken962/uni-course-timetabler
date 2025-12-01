@@ -20,7 +20,7 @@ app.get("/course/:id", async(req, res) => {
 
         // Null course means not found.
         if (!course) {
-            return res.sendStatus(400);
+            return res.sendStatus(404);
         }
 
         res.json(course);

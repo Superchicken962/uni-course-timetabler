@@ -1,7 +1,8 @@
 /**
  * @typedef { Object } Course
  * 
- * @property { String } id
+ * @property { String } courseId
+ * @property { String } area
  * @property { String } name
  */
 
