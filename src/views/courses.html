@@ -5,11 +5,33 @@
     <title>My Courses</title>
 </head>
 <body>
-    <div class="container-sm text-center mt-2">
-        <h1>Adelaide Uni Timetabler</h1>
+    <div class="container-sm mt-2">
+        <h1 class="text-center">My Courses</h1>
+
+        <div class="row mb-3">
+            <table class="table" id="courseTable">
+                <thead>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                </thead>
+
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="row mb-3">
+            <h3>Add Course</h3>
+            
+            <div class="col-md-4">
+                <div class="d-flex">
+                    <input id="addCourseInput" class="form-control" placeholder="Course ID or URL..."/>
+                    <button id="addCourseBtn" class="btn btn-outline-success ms-2">Add</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <%- include("include/footer.html") %>
 </body>
-<script src="/js/pages/myCourses.js"></script>
+<script src="/js/pages/myCourses.js?v=<%= appVersion%>"></script>
 </html>
