@@ -50,5 +50,5 @@ function fromText(...args) {
     }
 
     const content = fs.readFileSync(pth, "utf-8");
-    console.log(content);
+    // TODO: finish this?
 }
