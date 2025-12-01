@@ -18,8 +18,14 @@ app.get("/course/:id", async(req, res) => {
     try {
         const course = await scrapeCourse(req.params.id, courseUrl);
 
+        // Null course means not found.
+        if (!course) {
+            return res.sendStatus(400);
+        }
+
         res.json(course);
-    } catch {
+    } catch(e) {
+        console.log("Error scraping course:", e);
         res.sendStatus(500);
     }
 });
