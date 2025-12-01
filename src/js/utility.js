@@ -59,13 +59,23 @@ function getCourseUrl(id) {
 }
 
 /**
+ * Get the course id from a given course url.
+ * 
+ * @param { String } url
+ * @returns { String }
+ */
+function getCourseIdFromUrl(url) {
+    return url?.split("/study/courses/")?.[1] ?? "";
+}
+
+/**
  * Creates a course from a given url or id - calls api to scrape for course info.
  * Automatically saves to my courses.
  * 
  * @param { String } urlOrId - Url or course id to use. 
  * @returns { Promise<Course> }
  */
-function newCourse(urlOrId) {
+async function newCourse(urlOrId) {
     let isUrl = true;
     
     // Try creating url with parameter, if fails then its not a url.
@@ -75,6 +85,8 @@ function newCourse(urlOrId) {
         isUrl = false;
     }
 
-    const url = (isUrl) ? url : getCourseUrl(urlOrId);
-    console.log(isUrl, url);
+    const courseId = (isUrl) ? getCourseIdFromUrl(urlOrId) :urlOrId;
+    
+    const data = await Req.GET(`/api/course/${courseId}`);
+    console.log(data);
 }

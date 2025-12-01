@@ -2,6 +2,8 @@ class Req {
     /**
      * Request & JSON if specified.
      * 
+     * Courtesy of me, from: https://adelaidebustracker.com/js/ReqHelpers
+     * 
      * @typedef { Object } ReqResponse
      * @property { Response } response - Request response object.
      * @property { Object? } json - JSON data from response, if enabled through parameter.

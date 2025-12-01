@@ -25,7 +25,7 @@ const addCourseInput = document.querySelector("#addCourseInput");
 
 addCourseBtn.addEventListener("click", async() => {
     if (!addCourseInput.value) {
-        
+        // TODO: Show error.
         return;
     }
 
