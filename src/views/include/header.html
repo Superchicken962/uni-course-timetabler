@@ -4,3 +4,36 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="/css/main?v=<%= appVersion %>" />
+
+<% const pages = [
+    { title: "Home", href: "/" },
+    { title: "My Courses", href: "/courses" },
+    { title: "Timetable", href: "/timetable" }
+] %>
+
+<nav class="navbar navbar-expand-md bg-body-tertiary mb-3 sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Timetabler</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+
+                <% for (const page of pages) { %>
+                    <% const isActive = (path === page.href) %>
+
+                    <li class="nav-item">
+                        <a class="nav-link <%= isActive ? "active" : ""%> <%= page.disabled ? "disabled" : "" %>" aria-current="page" href="<%= page.href %>"><%= page.title %></a>
+                    </li>
+                <% } %>
+                
+            </ul>
+            <!-- <form class="d-flex" role="input">
+                <select class="form-select" id="dataVersionSelect">
+                    <option value="">Select version...</option>
+                </select>
+            </form> -->
+        </div>
+    </div>
+</nav>
