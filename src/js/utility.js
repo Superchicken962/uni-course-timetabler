@@ -1,9 +1,18 @@
 /**
  * @typedef { Object } Course
  * 
- * @property { String } courseId
- * @property { String } area
- * @property { String } name
+ * @property { Object } courseInfo
+ * @property { String } courseInfo.campus
+ * @property { String } courseInfo.courseArea
+ * @property { String } courseInfo.courseCoordinator
+ * @property { String } courseInfo.courseId
+ * @property { String } courseInfo.courseLevel
+ * @property { String } courseInfo.courseName
+ * @property { String } courseInfo.courseOwner
+ * @property { String } courseInfo.levelOfStudy
+ * @property { String } courseInfo.unitValue
+ * @property { String } courseInfo.universityWideElectiveCourse
+ * @property { String } courseInfo.workIntegratedLearningCourse
  */
 
 /**
@@ -37,6 +46,8 @@ function saveCourse(id, data) {
     }
 
     courses[id] = data;
+    localStorage.setItem("myCourses", JSON.stringify(courses));
+
     return Object.values(courses);
 }
 
@@ -88,6 +99,10 @@ async function newCourse(urlOrId) {
 
     const courseId = (isUrl) ? getCourseIdFromUrl(urlOrId) :urlOrId;
     
-    const data = await Req.GET(`/api/course/${courseId}`);
-    console.log(data);
+    const { response, json: data } = await Req.GET(`/api/course/${courseId}`);
+    if (!response.ok) {
+        throw new Error("Failed to create new course", { cause: response.statusText });
+    }
+
+    saveCourse(data.courseInfo?.courseId, data);
 }
