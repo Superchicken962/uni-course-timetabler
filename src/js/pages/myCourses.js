@@ -20,7 +20,32 @@ async function updateCourses() {
             <td>${course.courseInfo.courseOwner}</td>
             <td>${course.courseInfo.universityWideElectiveCourse}</td>
             <td>${course.courseInfo.workIntegratedLearningCourse}</td>
+            <td>
+                <a class="btn btn-primary" href="${course.url}" target="_blank">Open <i class="fa fa-external-link"></i></a>
+                <a class="btn btn-primary mt-2" href="/course/${course.courseInfo.courseId}">See More</a>
+                <button class="btn btn-danger mt-2" id="removeCourseBtn">Remove</button>
+            </td>
         `;
+
+        const removeBtn = row.querySelector("#removeCourseBtn");
+
+        let confirmReset;
+        removeBtn.addEventListener("click", () => {
+            if (removeBtn.getAttribute("data-click-to-confirm") == "true") {
+                clearTimeout(confirmReset);
+                removeCourse(course.courseInfo.courseId);
+                updateCourses();
+                return;
+            }
+
+            removeBtn.setAttribute("data-click-to-confirm", true);
+            removeBtn.textContent = "Confirm";
+
+            confirmReset = setTimeout(() => {
+                removeBtn.removeAttribute("data-click-to-confirm");
+                removeBtn.textContent = "Remove";            
+            }, 3000);
+        });
 
         body.appendChild(row);
     }
@@ -39,10 +64,11 @@ addCourseBtn.addEventListener("click", async() => {
 
     addCourseBtn.setAttribute("disabled", true);
     addCourseBtn.textContent = "...";
+    const enteredVal = addCourseInput.value;
 
     // Create new course, then update list of courses.
     try {
-        await newCourse(addCourseInput.value);
+        await newCourse(enteredVal);
     } catch(e) {
         addCourseBtn.textContent = "Add";
         addCourseBtn.removeAttribute("disabled");
@@ -55,7 +81,9 @@ addCourseBtn.addEventListener("click", async() => {
     addCourseBtn.textContent = "Add";
     addCourseBtn.removeAttribute("disabled");
 
-    addCourseInput.value = "";
+    // If input still has the added course code, then reset the input value.
+    if (addCourseInput.value === enteredVal)
+        addCourseInput.value = "";
 
     updateCourses();
 });

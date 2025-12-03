@@ -28,7 +28,7 @@
         const h = entries[0].target.clientHeight;
         
         // Essentially if we need to scroll, remove fixed positioning from footer.
-        if (h > window.outerHeight) {
+        if (h > window.outerHeight-250) {
             footer.classList.remove("fixed-bottom");
         } else {
             // Otherwise if there is no scroll, add it back so it sits at bottom.

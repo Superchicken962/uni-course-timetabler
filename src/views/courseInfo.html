@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <%- include("include/header.html") %>
+    <title>Course Info</title>
+</head>
+<body>
+    <div class="container-sm mt-2">
+        <h1 class="text-center" id="courseTitle"></h1>
+
+        <div class="row mb-3" id="courseInfo"></div>
+    </div>
+    
+    <%- include("include/footer.html") %>
+</body>
+<script>
+    const SELECTED_COURSE_ID = "<%= courseId %>";
+</script>
+<script src="/js/pages/courseInfo.js?v=<%= appVersion%>"></script>
+</html>

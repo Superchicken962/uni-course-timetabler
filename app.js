@@ -25,6 +25,10 @@ app.get("/courses", (req, res) => {
     res.render("courses.html");
 });
 
+app.get("/course/:id", (req, res) => {
+    res.render("courseInfo.html", { courseId: req.params.id });
+});
+
 app.get("/timetable", (req, res) => {
     res.render("timetable.html");
 });

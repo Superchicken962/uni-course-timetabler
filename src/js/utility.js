@@ -13,6 +13,9 @@
  * @property { String } courseInfo.unitValue
  * @property { String } courseInfo.universityWideElectiveCourse
  * @property { String } courseInfo.workIntegratedLearningCourse
+ * @property { String } courseInfo.courseOverview
+ * 
+ * @property { String } url - URL to course on adelaide uni website.
  */
 
 /**
@@ -105,4 +108,53 @@ async function newCourse(urlOrId) {
     }
 
     saveCourse(data.courseInfo?.courseId, data);
+}
+
+/**
+ * Remove course from saved courses.
+ * 
+ * @param { String } id - Course id.
+ * @returns { Course[] } Updated course list.
+ */
+function removeCourse(id) {
+    let courses;
+
+    try {
+        courses = JSON.parse((localStorage.getItem("myCourses") ?? "{}"));        
+    } catch {
+        courses = {};
+    }
+
+    delete courses[id];
+    localStorage.setItem("myCourses", JSON.stringify(courses));
+
+    return Object.values(courses);
+}
+
+/**
+ * Get saved course by id.
+ * 
+ * @param { String } id - Course id
+ * @returns { Course | null }
+ */
+function getCourseById(id) {
+    const courses = getMyCourses();
+    return courses.find(c => c.courseInfo.courseId == id);
+}
+
+function capitaliseWord(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1, word.length).toLowerCase();
+}
+
+/**
+ * Separates camel case string into separate, capitalised words.
+ * 
+ * @param { String } string
+ * @returns { String }
+ */
+function separateCamelCase(string) {
+    string = string.replace(/([A-Z])/g, " $1");
+    string = string.charAt(0).toUpperCase() + string.slice(1);
+
+    return string.trim();
 }
