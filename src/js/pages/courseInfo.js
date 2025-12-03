@@ -1,6 +1,142 @@
 const container = document.querySelector("#courseInfo");
 const title = document.querySelector("#courseTitle");
 
+const htmlHelpers = {
+    /**
+     * @param { Course } course 
+     */
+    courseInfo: (course) => {
+        const ignoreKeys = ["courseName", "courseOverview"];
+
+        return `
+            <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseInfoCollapse" aria-expanded="true" aria-controls="courseInfoCollapse">
+                <i class="fa fa-chevron-down" id="icon"></i> Course Information
+            </button>
+
+            <div class="collapse show" id="courseInfoCollapse">
+
+                <div>
+                    <div class="card mt-2 mb-3">
+                        <div class="card-header">Course Information</div>
+
+                        <div class="card-body">
+
+                            <div class="row">
+                                ${Object.entries(course.courseInfo).map(([key, val]) => {
+                                    if (ignoreKeys.includes(key)) return "";
+
+                                    return `
+                                        <div class="col-md-4">
+                                            <p>
+                                                <b>${separateCamelCase(key)}</b><br>
+                                                ${val}
+                                            </p>
+                                        </div>
+                                    `;
+                                }).join("")}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    ${ !course.courseInfo.courseOverview ? "" : `
+                        <h1>Course Overview</h1>
+                        <p class="lead">${course.courseInfo.courseOverview}</p>  
+                    `}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * @param { Course } course 
+     */
+    courseOptions: (course) => {
+        console.log(course.enrolmentOptions);
+
+        // Make initial collapsible for whole thing, then use recursive function to handle enrolment options.
+        // Use level 3 as max to use custom level for
+        return `
+            <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseOptionsCollapse" aria-expanded="true" aria-controls="courseOptionsCollapse">
+                <i class="fa fa-chevron-down" id="icon"></i> Course Options
+            </button>
+
+            <div class="collapse show" id="courseOptionsCollapse">
+                <div>
+                    ${renderCollapseTree(course.enrolmentOptions, null, (data) => {
+                        console.log(data);
+
+                        return `
+                            <div class="table-responsive ms-5">
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>Class Number</th>
+                                            <th>Capacity</th>
+                                            <th>Dates</th>
+                                            <th>Days</th>
+                                            <th>Location</th>
+                                            <th>Instructor</th>
+                                            <th>Time</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        ${data.map(cClass => {
+                                            return `
+                                                <tr>
+                                                    <td>${cClass.classNumber}</td>
+                                                    <td>${cClass.size}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            `;
+                                        }).join("")}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }, 3)}
+                </div>
+            </div>
+        `;
+
+        // return `
+        //     <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseOptionsCollapse" aria-expanded="true" aria-controls="courseOptionsCollapse">
+        //         <i class="fa fa-chevron-down" id="icon"></i> Course Options
+        //     </button>
+
+        //     <div class="collapse show" id="courseOptionsCollapse">
+        //         <div>
+        //             ${Object.entries(course.enrolmentOptions).map(([semName, campuses]) => {
+        //                 const semNameId = semName.replaceAll(" ", "");
+
+        //                 return `
+        //                     <div class="row ms-3">
+        //                         <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseCollapse${semNameId}" aria-expanded="true" aria-controls="courseCollapse${semNameId}">
+        //                             <i class="fa fa-chevron-right" id="icon"></i> ${semName}
+        //                         </button>
+
+        //                         <div class="collapse" id="courseCollapse${semNameId}">
+        //                             ${Object.entries(campuses).map(([campus, options]) => {
+        //                                 return `
+        //                                     ${campus}
+        //                                 `;
+        //                             }).join("")}
+        //                         </div>
+        //                     </div>
+        //                 `;
+
+        //             }).join("")}
+        //         </div>
+        //     </div>
+        // `;
+    }
+}
+
 function load(courseId) {
     const course = getCourseById(courseId);
     if (!course) {
@@ -16,60 +152,29 @@ function load(courseId) {
 
     const infoDiv = document.createElement("div");
     infoDiv.className = "row mb-3";
-
-    const ignoreKeys = ["courseName", "courseOverview"];
     
     infoDiv.innerHTML = `
-        <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseInfoCollapse" aria-expanded="false" aria-controls="courseInfoCollapse">
-            <i class="fa fa-chevron-down" id="couseInfoCollapseIcon"></i> Course Information
-        </button>
-
-        <div class="collapse show" id="courseInfoCollapse">
-
-            <div>
-                <div class="card mt-2 mb-3">
-                    <div class="card-header">Course Information</div>
-
-                    <div class="card-body">
-
-                        <div class="row">
-                            ${Object.entries(course.courseInfo).map(([key, val]) => {
-                                if (ignoreKeys.includes(key)) return "";
-
-                                return `
-                                    <div class="col-md-4">
-                                        <p>
-                                            <b>${separateCamelCase(key)}</b><br>
-                                            ${val}
-                                        </p>
-                                    </div>
-                                `;
-                            }).join("")}
-                        </div>
-
-                    </div>
-                </div>
-
-                ${ !course.courseInfo.courseOverview ? "" : `
-                    <h1>Course Overview</h1>
-                    <p class="lead">${course.courseInfo.courseOverview}</p>  
-                `}
-            </div>
-        </div>
+        ${htmlHelpers.courseInfo(course)}
 
         <hr>
-    `;
 
-    const infoCollapse = infoDiv.querySelector("#courseInfoCollapse");
-    infoCollapse.addEventListener("show.bs.collapse", () => {
-        console.log(infoDiv);
-        infoDiv.querySelector("i#couseInfoCollapseIcon").className = "fa fa-chevron-down";
-    });
-    infoCollapse.addEventListener("hide.bs.collapse", () => {
-        infoDiv.querySelector("i#couseInfoCollapseIcon").className = "fa fa-chevron-right";
-    });
+        ${htmlHelpers.courseOptions(course)}
+    `;
 
     container.appendChild(infoDiv);
 }
 
 load(SELECTED_COURSE_ID);
+
+document.addEventListener("show.bs.collapse", (ev) => {
+    const icon = ev.target.previousElementSibling?.querySelector("i");
+    if (!icon) return;
+   
+    icon.classList.replace("fa-chevron-right", "fa-chevron-down");
+});
+document.addEventListener("hide.bs.collapse", (ev) => {
+    const icon = ev.target.previousElementSibling?.querySelector("i");
+    if (!icon) return;
+
+    icon.classList.replace("fa-chevron-down", "fa-chevron-right");
+});
