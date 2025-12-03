@@ -29,11 +29,18 @@
                 <% } %>
                 
             </ul>
-            <!-- <form class="d-flex" role="input">
-                <select class="form-select" id="dataVersionSelect">
-                    <option value="">Select version...</option>
+            <form class="d-flex" role="input">
+                <select class="form-select" id="timetableSelect">
+                    <option value="">Select Timetable...</option>
+
+                    <div id="savedTimetables"></div>
+
+                    <option value="newTimetable^">+ New Timetable</option>
                 </select>
-            </form> -->
+            </form>
         </div>
     </div>
 </nav>
+
+<script src="/js/Timetable?v=<%= appVersion %>"></script>
+<script src="/js/pages/header?v=<%= appVersion %>"></script>

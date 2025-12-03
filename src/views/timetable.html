@@ -5,11 +5,20 @@
     <title>Timetable</title>
 </head>
 <body>
-    <div class="container-sm text-center mt-2">
-        <h1>Adelaide Uni Timetabler</h1>
+    <div class="container-sm mt-2">
+        <h1 class="text-center">My Timetables</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="d-flex">
+                    <input id="timetableName" class="form-control" type="text" />
+                    <button id="saveChangeBtn" class="btn btn-primary ms-2">Set</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <%- include("include/footer.html") %>
 </body>
-<script src="/js/pages/timetable.js"></script>
+<script src="/js/pages/myTimetable.js"></script>
 </html>

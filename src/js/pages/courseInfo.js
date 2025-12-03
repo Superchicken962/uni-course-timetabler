@@ -64,36 +64,51 @@ const htmlHelpers = {
             <div class="collapse show" id="courseOptionsCollapse">
                 <div>
                     ${renderCollapseTree(course.enrolmentOptions, null, (data) => {
-                        console.log(data);
-
                         return `
                             <div class="table-responsive ms-5">
-                                <table class="table table-responsive">
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th>Class Number</th>
                                             <th>Capacity</th>
                                             <th>Dates</th>
                                             <th>Days</th>
-                                            <th>Location</th>
-                                            <th>Instructor</th>
                                             <th>Time</th>
+                                            <th>Instructor</th>
+                                            <th>Location</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
                                         ${data.map(cClass => {
-                                            return `
-                                                <tr>
-                                                    <td>${cClass.classNumber}</td>
-                                                    <td>${cClass.size}</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                            `;
+                                            // console.log(getUniqueItemsInArray(cClass.dates));
+                                            const uniqueDates = [];
+                                            for (const date of cClass.dates) {
+                                                // Check for uniqueness by the time, as we only want to show more than one if the time changes.
+                                                const existing = (uniqueDates.findIndex(d => d.time === date.time) > -1);
+                                                if (!existing) {
+                                                    uniqueDates.push(date);
+                                                }
+                                            }
+
+                                            return uniqueDates.map(d => {
+                                                return `
+                                                    <tr>
+                                                        <td>${cClass.classNumber}</td>
+                                                        <td>${cClass.size}</td>
+                                                        <td>${d.dates}</td>
+                                                        <td>${d.days}</td>
+                                                        <td>${d.time}</td>
+                                                        <td>${d.instructor}</td>
+                                                        <td>${d.location}</td>
+                                                        <td>
+                                                            <a class="btn btn-primary" id="timetableAddBtn">Add</a>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                            }).join("");
+
                                         }).join("")}
                                     </tbody>
                                 </table>
@@ -103,37 +118,6 @@ const htmlHelpers = {
                 </div>
             </div>
         `;
-
-        // return `
-        //     <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseOptionsCollapse" aria-expanded="true" aria-controls="courseOptionsCollapse">
-        //         <i class="fa fa-chevron-down" id="icon"></i> Course Options
-        //     </button>
-
-        //     <div class="collapse show" id="courseOptionsCollapse">
-        //         <div>
-        //             ${Object.entries(course.enrolmentOptions).map(([semName, campuses]) => {
-        //                 const semNameId = semName.replaceAll(" ", "");
-
-        //                 return `
-        //                     <div class="row ms-3">
-        //                         <button class="btn bg-transparent w-auto" type="button" data-bs-toggle="collapse" data-bs-target="#courseCollapse${semNameId}" aria-expanded="true" aria-controls="courseCollapse${semNameId}">
-        //                             <i class="fa fa-chevron-right" id="icon"></i> ${semName}
-        //                         </button>
-
-        //                         <div class="collapse" id="courseCollapse${semNameId}">
-        //                             ${Object.entries(campuses).map(([campus, options]) => {
-        //                                 return `
-        //                                     ${campus}
-        //                                 `;
-        //                             }).join("")}
-        //                         </div>
-        //                     </div>
-        //                 `;
-
-        //             }).join("")}
-        //         </div>
-        //     </div>
-        // `;
     }
 }
 
@@ -162,6 +146,13 @@ function load(courseId) {
     `;
 
     container.appendChild(infoDiv);
+
+    const timetableAddButtons = document.querySelectorAll("#timetableAddBtn");
+    for (const btn of timetableAddButtons) {
+        btn.addEventListener("click", () => {
+            btn.remove();
+        });
+    }
 }
 
 load(SELECTED_COURSE_ID);
