@@ -119,15 +119,62 @@ class Timetable {
                 if (thisStart.getDay() !== classStart.getDay()) continue;
 
                 // Check if the given class is within the start and end times of existing class. If so, return the conflicting class.
-                if (thisStart.getHours() >= classStart.getHours() && thisEnd.getHours() <= classEnd.getHours()) {
+                if (this.#compareClassTimes({ start: classStart, end: classEnd }, { start: thisStart, end: thisEnd })) {
+                    console.log(classStart, thisStart);
                     return cls;
                 }
-
-                console.log(classStart, thisStart);
             }
         }
 
         return false;
+    }
+
+    /**
+     * Compares two class times, determining if they conflict or not.
+     * 
+     * @param { Object } classA 
+     * @param { Date } classA.start
+     * @param { Date } classA.end
+     * @param { Object } classB 
+     * @param { Date } classB.start
+     * @param { Date } classB.end
+     * 
+     * @returns { Boolean } Conflicts?
+     */
+    #compareClassTimes(classA, classB) {
+        // Class B starts during class A.
+        const bDuringA = (classA.end.getHours() >= classB.start.getHours() && classA.start.getHours() <= classB.end.getHours());
+        
+        // Class A starts during class B.
+        const aDuringB = (classB.end.getHours() >= classA.start.getHours() && classB.start.getHours() <= classA.end.getHours());
+
+        return bDuringA || aDuringB;
+    }
+
+    /**
+     * Function for testing method of checking for conflicts.
+     * 
+     * @param { String } classAStart
+     * @param { String } classAEnd 
+     * @param { String } classBStart 
+     * @param { String } classBEnd 
+     * @returns { Boolean } Conflict?
+     */
+    testCompare(classAStart, classAEnd, classBStart, classBEnd) {
+        const classA = { start: new Date(), end: new Date() };
+        const classB = { start: new Date(), end: new Date() };
+
+        const parseTime = (str) => {
+            return str.split(":").map(t => parseInt(t));
+        }
+
+        classA.start.setHours(...parseTime(classAStart));
+        classA.end.setHours(...parseTime(classAEnd));
+
+        classB.start.setHours(...parseTime(classBStart));
+        classB.end.setHours(...parseTime(classBEnd));
+
+        return this.#compareClassTimes(classA, classB);
     }
 
     /**

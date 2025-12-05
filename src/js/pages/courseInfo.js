@@ -87,7 +87,10 @@ const htmlHelpers = {
                                             const uniqueDates = [];
                                             for (const date of cClass.dates) {
                                                 // Check for uniqueness by the time, as we only want to show more than one if the time changes.
-                                                const existing = (uniqueDates.findIndex(d => d.time === date.time) > -1);
+                                                // const existing = (uniqueDates.findIndex(d => d.time === date.time) > -1);
+
+                                                // Use class id/num for uniqueness - having changing times for same class seems too complex currently.
+                                                const existing = (uniqueDates.findIndex(d => d.id === date.id) > -1);
                                                 if (!existing) {
                                                     uniqueDates.push(date);
                                                 }
@@ -119,8 +122,8 @@ const htmlHelpers = {
                                                         <td id="location">${d.location}</td>
                                                         <td>
                                                             <span id="conflictTag" class="badge bg-warning text-black ${ (!!hasConflict && !isSelected) ? "" : "d-none" }" title="Conflicts with another selected class">Conflict</span> 
-                                                            <a class="btn btn-sm btn-primary ${ !!hasConflict ? "d-none" : "" } " id="timetableAddBtn">Add</a>
-                                                            <a class="btn btn-sm btn-danger ${ isSelected ? "" : "d-none" }" id="timetableRemoveBtn">Unadd</a>
+                                                            <button class="btn btn-sm btn-primary ${ !!hasConflict ? "d-none" : "" } " id="timetableAddBtn" ${ !!selectedClass ? "disabled" : "" }>Add</button>
+                                                            <button class="btn btn-sm btn-danger ${ isSelected ? "" : "d-none" }" id="timetableRemoveBtn">Unadd</button>
                                                         </td>
                                                     </tr>
                                                 `;
@@ -187,6 +190,9 @@ function load(courseId) {
             row.querySelector("#timetableRemoveBtn").classList.remove("d-none");
             btn.classList.add("d-none");
 
+            // Disable the other options once this is selected.
+            disableOtherAddButtons(row.parentElement);
+
             addCourseOptionToTimetable(course, {
                 id: classNum,
                 type: classType,
@@ -224,6 +230,10 @@ function updateConflicts() {
     for (const b of timetableAddButtons) {
         const r = b.parentElement.parentElement;
 
+        // Skip class if it is selected - cannot conflict with self.
+        const isSelected = !!r.querySelector("#selectedTag");
+        if (isSelected) continue;
+
         const hasConflict = currentTimetable.hasConflict({
             timeRange: {
                 start: b.parentElement.parentElement.getAttribute("data-time-start"),
@@ -239,6 +249,9 @@ function updateConflicts() {
         removeBtn.classList.add("d-none");
         b.classList.remove("d-none");
 
+        // Re-enable other add buttons after this is removed.
+        enableOtherAddButtons(r.parentElement);
+
         // Show conflict tag + hide buttons if this conflicts.
         if (hasConflict) {
             conflictTag.classList.remove("d-none");
@@ -246,6 +259,13 @@ function updateConflicts() {
             b.classList.add("d-none");
         }
     }
+}
+
+function disableOtherAddButtons(tableBody) {
+    tableBody.querySelectorAll("#timetableAddBtn").forEach(b => b.setAttribute("disabled", true));
+}
+function enableOtherAddButtons(tableBody) {
+    tableBody.querySelectorAll("#timetableAddBtn").forEach(b => b.removeAttribute("disabled"));
 }
 
 load(SELECTED_COURSE_ID);
