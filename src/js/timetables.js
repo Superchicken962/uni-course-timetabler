@@ -57,6 +57,7 @@ function getTimetableById(id) {
  * @property { String } option.day
  * @property { String } option.campus
  * @property { String } option.location - Location of class on campus.
+ * @property { String } option.courseName - Name of course this option is for
  * @property { Object } option.timeRange - Class start and end timestamps.
  * @property { String } option.timeRange.start - ISO timestamp of start.
  * @property { String } option.timeRange.end - ISO timestamp of end.

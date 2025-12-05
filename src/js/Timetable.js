@@ -120,7 +120,6 @@ class Timetable {
 
                 // Check if the given class is within the start and end times of existing class. If so, return the conflicting class.
                 if (this.#compareClassTimes({ start: classStart, end: classEnd }, { start: thisStart, end: thisEnd })) {
-                    console.log(classStart, thisStart);
                     return cls;
                 }
             }

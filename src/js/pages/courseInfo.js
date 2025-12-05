@@ -123,7 +123,7 @@ const htmlHelpers = {
                                                         <td id="instructor">${d.instructor}</td>
                                                         <td id="location">${d.location}</td>
                                                         <td>
-                                                            <span id="conflictTag" class="badge bg-warning text-black ${ (!!hasConflict && !isSelected) ? "" : "d-none" }" title="Conflicts with another selected class">Conflict</span> 
+                                                            <span id="conflictTag" class="badge bg-warning text-black ${ (!!hasConflict && !isSelected) ? "" : "d-none" }" title="${buildConflictMessage(hasConflict)}">Conflict</span> 
                                                             <button class="btn btn-sm btn-primary ${ !!hasConflict ? "d-none" : "" } " id="timetableAddBtn" ${ !!selectedClass ? "disabled" : "" }>Add</button>
                                                             <button class="btn btn-sm btn-danger ${ isSelected ? "" : "d-none" }" id="timetableRemoveBtn">Unadd</button>
                                                         </td>
@@ -206,7 +206,8 @@ function load(courseId) {
                 timeRange: {
                     start: row.getAttribute("data-time-start"),
                     end: row.getAttribute("data-time-end")
-                }
+                },
+                courseName: course.courseInfo.courseName
             });
             
             // Post message so other tabs can update conflicts, taking into account the newly added course.
@@ -222,6 +223,9 @@ function load(courseId) {
             removeCourseOptionFromTimetable(course, row.getAttribute("data-class-number"));
 
             row.parentElement.querySelector("#selectedTag")?.remove();
+
+            // Re-enable other add buttons after this is removed.
+            enableOtherAddButtons(row.parentElement);
 
             updateConflicts();
 
@@ -257,14 +261,13 @@ function updateConflicts() {
         removeBtn.classList.add("d-none");
         b.classList.remove("d-none");
 
-        // Re-enable other add buttons after this is removed.
-        enableOtherAddButtons(r.parentElement);
-
         // Show conflict tag + hide buttons if this conflicts.
         if (hasConflict) {
             conflictTag.classList.remove("d-none");
             removeBtn.classList.add("d-none");
             b.classList.add("d-none");
+
+            conflictTag.setAttribute("title", buildConflictMessage(hasConflict));
         }
     }
 }
@@ -274,6 +277,16 @@ function disableOtherAddButtons(tableBody) {
 }
 function enableOtherAddButtons(tableBody) {
     tableBody.querySelectorAll("#timetableAddBtn").forEach(b => b.removeAttribute("disabled"));
+}
+
+/**
+ * Builds a conflicted class message.
+ * 
+ * @param { ClassOption } conflictClass - Conflicting class 
+ * @returns { String }
+ */
+function buildConflictMessage(conflictClass) {
+    return `Conflicts with ${conflictClass.courseName} in ${conflictClass.type} at ${conflictClass.time}`;
 }
 
 load(SELECTED_COURSE_ID);
