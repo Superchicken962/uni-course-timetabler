@@ -142,11 +142,13 @@ class Timetable {
      * @returns { Boolean } Conflicts?
      */
     #compareClassTimes(classA, classB) {
+        // TODO: Perhaps consider checking minutes - if there are any more issues.
+
         // Class B starts during class A.
-        const bDuringA = (classA.end.getHours() >= classB.start.getHours() && classA.start.getHours() <= classB.end.getHours());
+        const bDuringA = (classA.end.getHours() > classB.start.getHours() && classA.start.getHours() < classB.end.getHours());
         
         // Class A starts during class B.
-        const aDuringB = (classB.end.getHours() >= classA.start.getHours() && classB.start.getHours() <= classA.end.getHours());
+        const aDuringB = (classB.end.getHours() > classA.start.getHours() && classB.start.getHours() < classA.end.getHours());
 
         return bDuringA || aDuringB;
     }
