@@ -295,14 +295,40 @@ document.addEventListener("show.bs.collapse", (ev) => {
     const icon = ev.target.previousElementSibling?.querySelector("i");
     if (!icon) return;
    
+    saveCollapsibleState(ev.target.id, 1);
+
     icon.classList.replace("fa-chevron-right", "fa-chevron-down");
 });
 document.addEventListener("hide.bs.collapse", (ev) => {
     const icon = ev.target.previousElementSibling?.querySelector("i");
     if (!icon) return;
 
+    saveCollapsibleState(ev.target.id, 0);
+
     icon.classList.replace("fa-chevron-down", "fa-chevron-right");
 });
+
+function loadCollapsibleStates() {
+    const collapseStates = getSavedCollapsedStates();
+
+    for (const [key, state] of Object.entries(collapseStates)) {
+        const container = document.querySelector(`[id='${key}']`);
+        if (!container) continue;
+
+        // Add class to prevent animation here.
+        container.classList.add("no-transition");
+        
+        const collapse = bootstrap.Collapse.getOrCreateInstance(container, { toggle: false, instant: true });
+
+        if (state == 0) collapse.hide();
+        else collapse.show();
+
+        requestAnimationFrame(() => {
+            container.classList.remove("no-transition");
+        });
+    }
+}
+window.addEventListener("DOMContentLoaded", loadCollapsibleStates);
 
 // If another tab has selected a course, update conflicts on this page to reflect it.
 bc.onmessage = (ev) => {

@@ -49,3 +49,22 @@ function renderCollapseTree(data, parentId, dataSetter, stopAtLevel, atLevel = 0
         `;
     }).join("");
 }
+
+/**
+ * Get dictionary of saved collapsible states.
+ */
+function getSavedCollapsedStates() {
+    try {
+        const states = localStorage.getItem("collapsibleStates") ?? "{}";
+        return JSON.parse(states);
+    } catch {
+        return {};
+    }
+}
+function saveCollapsibleState(id, state) {
+    const states = getSavedCollapsedStates();
+
+    states[id] = state;
+
+    localStorage.setItem("collapsibleStates", JSON.stringify(states));
+}

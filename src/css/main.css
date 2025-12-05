@@ -1,0 +1,4 @@
+.collapse.no-transition,
+.collapsing.no-transition {
+    transition: none !important;
+}
