@@ -1,4 +1,5 @@
 {
     "port": 3076,
-    "courseBaseUrl": "https://adelaideuni.edu.au/study/courses/%course-id%"
+    "courseBaseUrl": "https://adelaideuni.edu.au/study/courses/%course-id%",
+    "production": false
 }
