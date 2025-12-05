@@ -53,6 +53,7 @@ const htmlHelpers = {
      */
     courseOptions: (course) => {
         console.log(course.enrolmentOptions);
+        const currentTimetable = getTimetableById(getSelectedTimetable());
 
         // Make initial collapsible for whole thing, then use recursive function to handle enrolment options.
         // Use level 3 as max to use custom level for
@@ -92,16 +93,23 @@ const htmlHelpers = {
                                                 }
                                             }
 
+                                            const selectedClass = currentTimetable.getSelectedClass(course.courseInfo.courseId, cClass.classType);
+
                                             return uniqueDates.map(d => {
+                                                const isSelected = (selectedClass?.id == cClass.classNumber);
+
                                                 return `
-                                                    <tr>
-                                                        <td>${cClass.classNumber}</td>
+                                                    <tr data-class-number="${cClass.classNumber}" data-campus="${cClass.campus}" data-class-type="${cClass.classType}">
+                                                        <td>
+                                                            ${cClass.classNumber}
+                                                            ${isSelected ? `<span id="selectedTag" class="badge bg-primary">Selected</span>` : ""}
+                                                        </td>
                                                         <td>${cClass.size}</td>
                                                         <td>${d.dates}</td>
-                                                        <td>${d.days}</td>
-                                                        <td>${d.time}</td>
-                                                        <td>${d.instructor}</td>
-                                                        <td>${d.location}</td>
+                                                        <td id="day">${d.days}</td>
+                                                        <td id="time">${d.time}</td>
+                                                        <td id="instructor">${d.instructor}</td>
+                                                        <td id="location">${d.location}</td>
                                                         <td>
                                                             <a class="btn btn-primary" id="timetableAddBtn">Add</a>
                                                         </td>
@@ -150,7 +158,27 @@ function load(courseId) {
     const timetableAddButtons = document.querySelectorAll("#timetableAddBtn");
     for (const btn of timetableAddButtons) {
         btn.addEventListener("click", () => {
-            btn.remove();
+            const row = btn.parentElement.parentElement;
+
+            const classNum = row.getAttribute("data-class-number");
+            const classType = row.getAttribute("data-class-type");
+
+            // Remove selected tag from previous class, and add it to newly selected one.
+            row.parentElement.querySelector("#selectedTag")?.remove();
+            row.querySelector("td").innerHTML = `
+                ${classNum}
+                <span id="selectedTag" class="badge bg-primary">Selected</span>
+            `;
+
+            addCourseOptionToTimetable(course, {
+                id: classNum,
+                type: classType,
+                instructor: row.querySelector("#instructor")?.textContent,
+                time: row.querySelector("#time")?.textContent,
+                day: row.querySelector("#day")?.textContent,
+                location: row.querySelector("#location")?.textContent,
+                campus: row.getAttribute("data-campus")
+            });
         });
     }
 }

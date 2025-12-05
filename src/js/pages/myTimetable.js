@@ -22,5 +22,12 @@ function loadDetails() {
 loadDetails();
 
 function updateTimetable() {
-
+    
 }
+
+
+// This event is called when timetable is changed on header - update page when this is done.
+document.addEventListener("TimetableSelected", (ev) => {
+    loadDetails();
+    updateTimetable();
+});

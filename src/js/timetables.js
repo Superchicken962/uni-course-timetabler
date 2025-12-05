@@ -1,13 +1,6 @@
 // Utility functions for timetables.
 
 /**
- * @typedef { Object } Timetable
- * 
- * @property { String } id
- * @property { String } name
- */
-
-/**
  * Get user's saved timetables.
  * 
  * @return { Timetable[] }
@@ -15,7 +8,7 @@
 function getMyTimetables() {
     try {
         const timetables = JSON.parse((localStorage.getItem("myTimetables") ?? "{}"));
-        return Object.values(timetables);
+        return Object.values(timetables).map(t => Timetable.deserialize(t));
     } catch {
         return [];
     }
@@ -52,4 +45,30 @@ function saveTimetable(id, data) {
 function getTimetableById(id) {
     const tt = getMyTimetables();
     return tt.find(t => t.id == id);
+}
+
+/**
+ * @typedef { Object } ClassOption
+ * 
+ * @property { String } option.id - Class id
+ * @property { String } option.type - Class 'type' / name, e.g. "Related class: Practical"
+ * @property { String } option.instructor
+ * @property { String } option.time
+ * @property { String } option.day
+ * @property { String } option.campus
+ * @property { String } option.location - Location of class on campus.
+ */
+
+/**
+ * @param { Course } course
+ * @param { String } classId - Class/option id to add.
+ * @param { ClassOption } option - Option
+
+ */
+function addCourseOptionToTimetable(course, option) {
+    const selectedTt = getTimetableById(getSelectedTimetable());
+
+    selectedTt.addClass(course.courseInfo.courseId, option);
+
+    selectedTt.save();
 }

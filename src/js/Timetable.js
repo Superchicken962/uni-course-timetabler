@@ -18,6 +18,7 @@ class Timetable {
         }
 
         this.name = name;
+        this.courses = {};
     }
 
     #getAll() {
@@ -39,5 +40,43 @@ class Timetable {
         localStorage.setItem("myTimetables", JSON.stringify(timetables));
 
         return this;
+    }
+
+    /**
+     * 
+     * @param { String } courseId 
+     * @param { ClassOption } classInfo
+     */
+    addClass(courseId, classInfo) {
+        console.log('add', courseId, classInfo);
+
+        const course = this.courses[courseId] = (this.courses[courseId] || {});
+        course[classInfo.type] = classInfo;
+    }
+
+    /**
+     * Get selected time for a given course id.
+     * 
+     * @param { String } - Course id. 
+     * @param { String } - Class type/name, e.g. 'Related class: Practical"
+     */
+    getSelectedClass(courseId, classType) {
+        const course = this.courses[courseId];
+        if (!course) return null;
+
+        return course[classType] ?? null;
+    }
+
+    /**
+     * Deserialize a regular object into a Timetable object.
+     * 
+     * @param { Object } obj - Object to use.
+     * @returns { Timetable }
+     */
+    static deserialize(obj) {
+        const inst = new Timetable(obj.id, obj.name);
+        inst.courses = obj.courses ?? {};
+
+        return inst;
     }
 }
