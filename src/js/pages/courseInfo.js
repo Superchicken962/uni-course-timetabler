@@ -1,3 +1,5 @@
+const bc = new BroadcastChannel("courseInfoPage");
+
 const container = document.querySelector("#courseInfo");
 const title = document.querySelector("#courseTitle");
 
@@ -206,6 +208,9 @@ function load(courseId) {
                     end: row.getAttribute("data-time-end")
                 }
             });
+            
+            // Post message so other tabs can update conflicts, taking into account the newly added course.
+            bc.postMessage("courseChanged");
         });
     }
 
@@ -219,6 +224,9 @@ function load(courseId) {
             row.parentElement.querySelector("#selectedTag")?.remove();
 
             updateConflicts();
+
+            // Post message so other tabs can update conflicts, taking into account the newly removed course.
+            bc.postMessage("courseChanged");
         });
     }
 }
@@ -282,3 +290,10 @@ document.addEventListener("hide.bs.collapse", (ev) => {
 
     icon.classList.replace("fa-chevron-down", "fa-chevron-right");
 });
+
+// If another tab has selected a course, update conflicts on this page to reflect it.
+bc.onmessage = (ev) => {
+    if (ev.data === "courseChanged") {
+        updateConflicts();
+    }
+}
