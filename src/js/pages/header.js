@@ -16,19 +16,21 @@ function setSelectedTimetable(timetableId) {
     if (opt) opt.selected = true;
 
     ttSelect.addEventListener("input", (ev) => {
+        let ttId = ttSelect.value;
+
+        // Create new timetable when value is selected.
         if (ttSelect.value === "newTimetable^") {
             const newTimetable = new Timetable().save();
             loadTimetablesOptions();
             
             ttSelect.value = newTimetable.id;
-
-            return;
+            ttId = newTimetable.id;
         }
 
-        setSelectedTimetable(ttSelect.value);
+        setSelectedTimetable(ttId);
 
         // Dispatch an event when the version is changed.
-        const changeEv = new CustomEvent("TimetableSelected", { detail: ttSelect.value });
+        const changeEv = new CustomEvent("TimetableSelected", { detail: ttId });
         document.dispatchEvent(changeEv);
     });
 })();

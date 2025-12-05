@@ -164,7 +164,9 @@ function load(courseId) {
 
         <hr>
 
-        ${htmlHelpers.courseOptions(course)}
+        <div class="p-0" id="courseOptionsContainer">
+            ${htmlHelpers.courseOptions(course)}
+        </div>
     `;
 
     container.appendChild(infoDiv);
@@ -336,3 +338,13 @@ bc.onmessage = (ev) => {
         updateConflicts();
     }
 }
+
+// This event is called when timetable is changed on header.
+document.addEventListener("TimetableSelected", (ev) => {
+    updateConflicts();
+
+    // Essentially reload the course options section, and reload collapsible states to ensure it is shown.
+    const course = getCourseById(SELECTED_COURSE_ID);
+    document.querySelector("#courseOptionsContainer").innerHTML = htmlHelpers.courseOptions(course);
+    loadCollapsibleStates();
+});
