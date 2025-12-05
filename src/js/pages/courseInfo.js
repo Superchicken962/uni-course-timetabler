@@ -97,9 +97,16 @@ const htmlHelpers = {
 
                                             return uniqueDates.map(d => {
                                                 const isSelected = (selectedClass?.id == cClass.classNumber);
+                                                const hasConflict = currentTimetable.hasConflict(d);
 
                                                 return `
-                                                    <tr data-class-number="${cClass.classNumber}" data-campus="${cClass.campus}" data-class-type="${cClass.classType}">
+                                                    <tr 
+                                                        data-class-number="${cClass.classNumber}"
+                                                        data-campus="${cClass.campus}"
+                                                        data-class-type="${cClass.classType}"
+                                                        data-time-start="${d.timeRange?.start}"
+                                                        data-time-end="${d.timeRange?.end}"
+                                                    >
                                                         <td>
                                                             ${cClass.classNumber}
                                                             ${isSelected ? `<span id="selectedTag" class="badge bg-primary">Selected</span>` : ""}
@@ -111,7 +118,9 @@ const htmlHelpers = {
                                                         <td id="instructor">${d.instructor}</td>
                                                         <td id="location">${d.location}</td>
                                                         <td>
-                                                            <a class="btn btn-primary" id="timetableAddBtn">Add</a>
+                                                            <span id="conflictTag" class="badge bg-warning text-black ${ (!!hasConflict && !isSelected) ? "" : "d-none" }" title="Conflicts with another selected class">Conflict</span> 
+                                                            <a class="btn btn-sm btn-primary ${ !!hasConflict ? "d-none" : "" } " id="timetableAddBtn">Add</a>
+                                                            <a class="btn btn-sm btn-danger ${ isSelected ? "" : "d-none" }" id="timetableRemoveBtn">Unadd</a>
                                                         </td>
                                                     </tr>
                                                 `;
@@ -170,6 +179,14 @@ function load(courseId) {
                 <span id="selectedTag" class="badge bg-primary">Selected</span>
             `;
 
+            // Calculate conflicts again after choosing class.
+            updateConflicts();
+
+            // Now since the btn was selected, specifically add unadd button for that.
+            row.querySelector("#conflictTag").classList.add("d-none");
+            row.querySelector("#timetableRemoveBtn").classList.remove("d-none");
+            btn.classList.add("d-none");
+
             addCourseOptionToTimetable(course, {
                 id: classNum,
                 type: classType,
@@ -177,9 +194,57 @@ function load(courseId) {
                 time: row.querySelector("#time")?.textContent,
                 day: row.querySelector("#day")?.textContent,
                 location: row.querySelector("#location")?.textContent,
-                campus: row.getAttribute("data-campus")
+                campus: row.getAttribute("data-campus"),
+                timeRange: {
+                    start: row.getAttribute("data-time-start"),
+                    end: row.getAttribute("data-time-end")
+                }
             });
         });
+    }
+
+    const timetableRemoveButtons = document.querySelectorAll("#timetableRemoveBtn");
+    for (const btn of timetableRemoveButtons) {
+        const row = btn.parentElement.parentElement;
+
+        btn.addEventListener("click", () => {
+            removeCourseOptionFromTimetable(course, row.getAttribute("data-class-number"));
+
+            row.parentElement.querySelector("#selectedTag")?.remove();
+
+            updateConflicts();
+        });
+    }
+}
+
+function updateConflicts() {
+    const timetableAddButtons = document.querySelectorAll("#timetableAddBtn");
+    const currentTimetable = getTimetableById(getSelectedTimetable());
+
+    for (const b of timetableAddButtons) {
+        const r = b.parentElement.parentElement;
+
+        const hasConflict = currentTimetable.hasConflict({
+            timeRange: {
+                start: b.parentElement.parentElement.getAttribute("data-time-start"),
+                end: b.parentElement.parentElement.getAttribute("data-time-end")
+            }
+        });
+
+        const conflictTag = r.querySelector("#conflictTag");
+        const removeBtn = r.querySelector("#timetableRemoveBtn");
+
+        // By default, show the add button and hide all else.
+        conflictTag.classList.add("d-none");
+        removeBtn.classList.add("d-none");
+        b.classList.remove("d-none");
+
+        // Show conflict tag + hide buttons if this conflicts.
+        if (hasConflict) {
+            conflictTag.classList.remove("d-none");
+            removeBtn.classList.add("d-none");
+            b.classList.add("d-none");
+        }
     }
 }
 

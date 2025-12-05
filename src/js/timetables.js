@@ -57,13 +57,14 @@ function getTimetableById(id) {
  * @property { String } option.day
  * @property { String } option.campus
  * @property { String } option.location - Location of class on campus.
+ * @property { Object } option.timeRange - Class start and end timestamps.
+ * @property { String } option.timeRange.start - ISO timestamp of start.
+ * @property { String } option.timeRange.end - ISO timestamp of end.
  */
 
 /**
  * @param { Course } course
- * @param { String } classId - Class/option id to add.
  * @param { ClassOption } option - Option
-
  */
 function addCourseOptionToTimetable(course, option) {
     const selectedTt = getTimetableById(getSelectedTimetable());
@@ -71,4 +72,19 @@ function addCourseOptionToTimetable(course, option) {
     selectedTt.addClass(course.courseInfo.courseId, option);
 
     selectedTt.save();
+}
+
+
+/**
+ * @param { Course } course
+ * @param { String } classId - Id of selected class/option to remove.
+ */
+function removeCourseOptionFromTimetable(course, classId) {
+    const selectedTt = getTimetableById(getSelectedTimetable());
+
+    const removed = selectedTt.removeClass(course.courseInfo.courseId, classId);
+
+    selectedTt.save();
+
+    return removed;
 }
