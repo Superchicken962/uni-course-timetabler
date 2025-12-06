@@ -192,7 +192,15 @@ class Timetable {
                 const start = new Date(cClass.timeRange.start);
 
                 const startTime = start.getHours()%24;
+                const endTime = new Date(cClass.timeRange.end).getHours()%24;
+
                 const day = DateHelpers.getDayIndex(cClass.day);
+                const duration = endTime - startTime;
+
+                // Essentially go to the next hours that the class runs for, and state that it is 'continued' from this one.
+                for (let i = 1; i < duration; i++) {
+                    doubleArr[startTime+i][day-1] = { continued: true };
+                }
 
                 // Add 'type' to cClass name in case needed.
                 cClass.name = type;

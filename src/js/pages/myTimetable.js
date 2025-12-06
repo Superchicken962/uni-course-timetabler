@@ -43,16 +43,37 @@ function updateTimetable() {
 
         row.innerHTML = `
             <td>${formattedTime}:00 ${amOrPm}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            ${
+                [0,1,2,3,4].map(i => { 
+                    return buildCourseColumn(tt[time][i]);
+                }).join("")
+            }
         `;
 
         tableBody.appendChild(row);
     }
+}
 
+/**
+ * Builds course element for timetable.
+ * 
+ * @param { ClassOption } data 
+ */
+function buildCourseColumn(data) {
+    if (!data) return "<td></td>";
+    // 'continued' means the data/course is continued from the previous row (is not first hour of class).
+    // Return empty string in this case so the empty td does not distort the table.
+    if (data.continued) return "";
+
+    const start = new Date(data.timeRange?.start);
+    const end = new Date(data.timeRange?.end);
+
+    // Minus hours to get approximate duration - so lengths like 110 mins shows as 2 hours.
+    const duration = end.getHours() - start.getHours();
+
+    return `
+        <td rowspan="${duration}">${data.courseName}</td>
+    `;
 }
 
 const updatePage = () => {
