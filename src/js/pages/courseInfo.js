@@ -209,7 +209,8 @@ function load(courseId) {
                     start: row.getAttribute("data-time-start"),
                     end: row.getAttribute("data-time-end")
                 },
-                courseName: course.courseInfo.courseName
+                courseName: course.courseInfo.courseName,
+                courseId: course.courseInfo.courseId
             });
             
             // Post message so other tabs can update conflicts, taking into account the newly added course.

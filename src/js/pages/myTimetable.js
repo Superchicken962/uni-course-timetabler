@@ -35,6 +35,9 @@ function updateTimetable() {
     // Create array of all times from start to finish. E.g. [8, 9, 10, ... 21, 22]
     const times = Array.from({ length: LAST_HOUR-(FIRST_HOUR-1) }, (_, i) => FIRST_HOUR + i);
 
+    assignCourseColours(selected);
+    updateColourOptions(selected);
+
     for (const time of times) {
         const row = document.createElement("tr");
 
@@ -45,15 +48,13 @@ function updateTimetable() {
             <td>${formattedTime}:00 ${amOrPm}</td>
             ${
                 [0,1,2,3,4].map(i => { 
-                    return buildCourseColumn(tt[time][i]);
+                    return buildCourseColumn(tt[time][i], selected);
                 }).join("")
             }
         `;
 
         tableBody.appendChild(row);
     }
-
-    updateColourOptions(selected);
 }
 
 /**
@@ -61,7 +62,7 @@ function updateTimetable() {
  * 
  * @param { ClassOption } data 
  */
-function buildCourseColumn(data) {
+function buildCourseColumn(data, timetable) {
     if (!data) return "<td></td>";
     // 'continued' means the data/course is continued from the previous row (is not first hour of class).
     // Return empty string in this case so the empty td does not distort the table.
@@ -73,8 +74,10 @@ function buildCourseColumn(data) {
     // Minus hours to get approximate duration - so lengths like 110 mins shows as 2 hours.
     const duration = end.getHours() - start.getHours();
 
+    const colour = timetable.colours[data.courseId];
+
     return `
-        <td rowspan="${duration}">
+        <td rowspan="${duration}" data-course-id="${data.courseId}" style="background-color:${colour}">
             <div class="courseTimetableBlock py-0">
                 <b>${data.courseName}</b><br>
 
@@ -95,7 +98,6 @@ function formatClassType(type) {
 }
 
 function updateColourOptions(timetable) {
-    return;
     const container = document.querySelector("#colourOptions");
 
     container.innerHTML = "<h3>Course Colours</h3>";
@@ -103,14 +105,47 @@ function updateColourOptions(timetable) {
         const courseName = Object.values(data)[0].courseName;
 
         const inputDiv = document.createElement("div");
+        inputDiv.className = "d-flex mb-2";
+
+        const selectedColour = timetable.colours[courseId];
 
         inputDiv.innerHTML = `
-            <label for="courseColourInp:${courseId}" class="form-label">${courseName}</label>
-            <input type="color" class="form-control form-control-color" id="courseColourInp:${courseId}" value="#563d7c">
+            <input type="color" class="form-control form-control-color me-2" id="courseColourInp:${courseId}" value="${selectedColour}">
+            <label for="courseColourInp:${courseId}" class="form-label mt-1">${courseName}</label>
         `;
+
+        const inp = inputDiv.querySelector("input");
+        inp.addEventListener("input", () => {
+            timetable.colours[courseId] = inp.value;
+            updateCourseColour(courseId, inp.value);
+            
+            timetable.save();
+        });
 
         container.appendChild(inputDiv);
     }
+}
+
+/**
+ * Assigns random colour to courses without one.
+ */
+function assignCourseColours(timetable) {
+    for (const [courseId, data] of Object.entries(timetable.courses)) {
+        // Skip if it has a colour.
+        if (!!timetable.colours[courseId]) continue;
+
+        timetable.colours[courseId] = getRandomColour();
+    }
+
+    timetable.save();
+}
+
+/**
+ * Sets course elements colour. 
+ */
+function updateCourseColour(courseId, colour) {
+    const elements = document.querySelectorAll(`[data-course-id='${courseId}']`);
+    elements.forEach(c => c.style.backgroundColor = colour );
 }
 
 

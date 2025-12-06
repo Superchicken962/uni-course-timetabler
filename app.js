@@ -9,6 +9,8 @@ app.engine("html", require('ejs').renderFile);
 app.set("view-engine", "html");
 app.set("views", path.join(__dirname, "src/views"));
 
+if (config.production) process.env.TZ = "Australia/Adelaide";
+
 app.use("*all", async(req, res, next) => {
     res.locals.path = req.originalUrl;
     res.locals.appVersion = appVersion;

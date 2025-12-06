@@ -80,3 +80,29 @@ function saveCollapsibleState(id, state) {
 function create2DArray(rows = 2, cols = 2, initialValue = null) {
     return Array.from({ length: rows }, () => new Array(cols).fill(initialValue));
 }
+
+function getRandomColour() {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+
+    return rgbToHex(r, g, b);
+}
+
+/**
+ * Convert rgb values into hex string.
+ * 
+ * @param { Number } r 
+ * @param { Number } g 
+ * @param { Number } b 
+ * @returns { String }
+ */
+function rgbToHex(r, g, b) {
+    r = parseInt(r).toString(16);
+    g = parseInt(g).toString(16);
+    b = parseInt(b).toString(16);
+
+    const f = (n) => ("0"+n).slice(-2);
+
+    return "#" + f(r)+f(g)+f(b);
+}
