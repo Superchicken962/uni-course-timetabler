@@ -1,3 +1,5 @@
+const bc = new BroadcastChannel("courseManagement");
+
 const timetableNameInp = document.querySelector("input#timetableName");
 timetableNameInp.addEventListener("input", function(ev) {
     this.value = this.value.replace("^", "");
@@ -103,6 +105,7 @@ function updateColourOptions(timetable) {
     container.innerHTML = "<h3>Course Colours</h3>";
     for (const [courseId, data] of Object.entries(timetable.courses)) {
         const courseName = Object.values(data)[0]?.courseName;
+        if (!courseName) continue;
 
         const inputDiv = document.createElement("div");
         inputDiv.className = "d-flex mb-2";
@@ -130,14 +133,18 @@ function updateColourOptions(timetable) {
  * Assigns random colour to courses without one.
  */
 function assignCourseColours(timetable) {
+    let changed = 0;
+    
     for (const [courseId, data] of Object.entries(timetable.courses)) {
         // Skip if it has a colour.
         if (!!timetable.colours[courseId]) continue;
 
         timetable.colours[courseId] = getRandomColour();
+        changed++;
     }
 
-    timetable.save();
+    // Only save if this actually changed something.
+    if (changed > 0) timetable.save();
 }
 
 /**
@@ -148,6 +155,12 @@ function updateCourseColour(courseId, colour) {
     elements.forEach(c => c.style.backgroundColor = colour );
 }
 
+// When course is changed from another tab, update timetable.
+bc.onmessage = (ev) => {
+    if (ev.data === "courseChanged") {
+        updateTimetable();
+    }
+}
 
 const updatePage = () => {
     loadDetails();

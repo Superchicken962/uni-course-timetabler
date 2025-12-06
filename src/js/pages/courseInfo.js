@@ -1,4 +1,4 @@
-const bc = new BroadcastChannel("courseInfoPage");
+const bc = new BroadcastChannel("courseManagement");
 
 const container = document.querySelector("#courseInfo");
 const title = document.querySelector("#courseTitle");
@@ -212,6 +212,8 @@ function load(courseId) {
                 courseName: course.courseInfo.courseName,
                 courseId: course.courseInfo.courseId
             });
+
+            console.log("for some reason, keeping this log here prevents a weird bug 😭")
             
             // Post message so other tabs can update conflicts, taking into account the newly added course.
             bc.postMessage("courseChanged");
