@@ -66,12 +66,14 @@ function getTimetableById(id) {
 
 /**
  * @param { Course } course
- * @param { ClassOption } option - Option
+ * @param { ClassOption[] } options - Classes for option.
  */
-function addCourseOptionToTimetable(course, option) {
+function addCourseOptionToTimetable(course, options) {
     const selectedTt = getTimetableById(getSelectedTimetable());
 
-    selectedTt.addClass(course.courseInfo.courseId, option);
+    for (const opt of options) {
+        selectedTt.addClass(course.courseInfo.courseId, opt);
+    }
 
     selectedTt.save();
 }
