@@ -50,7 +50,9 @@ class Timetable {
      */
     addClass(courseId, classInfo) {
         const course = this.courses[courseId] = (this.courses[courseId] || {});
-        course[classInfo.type] = classInfo;
+        course[classInfo.type] = course[classInfo.type] || [];
+
+        course[classInfo.type].push(classInfo);
     }
 
     /**
@@ -62,16 +64,18 @@ class Timetable {
      */
     removeClass(courseId, classId) {
         const course = this.courses[courseId];
-        if (!course) return;
+        if (!course) return false;
 
         let removeKey;
 
         // Search through selected course options for a matching class id.
         for (const cls of Object.values(course)) {
-            if (cls.id == classId) {
-                // Set key so that it can be removed from course object later.
-                removeKey = cls.type;
-                break;
+            for (const optionClass of cls) {
+                if (optionClass.id == classId) {
+                    // Set key so that it can be removed from course object later.
+                    removeKey = optionClass.type;
+                    break;
+                }
             }
         }
 
@@ -88,7 +92,7 @@ class Timetable {
      * 
      * @param { String } - Course id. 
      * @param { String } - Class type/name, e.g. 'Related class: Practical"
-     * @returns { ClassOption | null }
+     * @returns { ClassOption[] | null }
      */
     getSelectedClass(courseId, classType) {
         const course = this.courses[courseId];
@@ -113,16 +117,20 @@ class Timetable {
             for (const cls of Object.values(course)) {
                 if (cls === classInfo) continue;
 
-                const thisStart = new Date(cls.timeRange.start);
-                const thisEnd = new Date(cls.timeRange.end);
-
-                // Obviously not a conflict if the days are different - skip to next class.
-                if (thisStart.getDay() !== classStart.getDay()) continue;
-
-                // Check if the given class is within the start and end times of existing class. If so, return the conflicting class.
-                if (this.#compareClassTimes({ start: classStart, end: classEnd }, { start: thisStart, end: thisEnd })) {
-                    return cls;
+                // Now check through each class for the option.
+                for (const optionClass of cls) {
+                    const thisStart = new Date(optionClass.timeRange.start);
+                    const thisEnd = new Date(optionClass.timeRange.end);
+    
+                    // Obviously not a conflict if the days are different - skip to next class.
+                    if (thisStart.getDay() !== classStart.getDay()) continue;
+    
+                    // Check if the given class is within the start and end times of existing class. If so, return the conflicting class.
+                    if (this.#compareClassTimes({ start: classStart, end: classEnd }, { start: thisStart, end: thisEnd })) {
+                        return optionClass;
+                    }
                 }
+
             }
         }
 
@@ -188,27 +196,32 @@ class Timetable {
         // 24 x 5 Array - 24 hours, 5 days.
         const doubleArr = create2DArray(24, 5, null);
 
+        // Loop through each course.
         for (const course of Object.values(this.courses)) {
+            // Loop through eahc option of the course.
             for (const [type, cClass] of Object.entries(course)) {
-                const start = new Date(cClass.timeRange.start);
-
-                const startTime = start.getHours()%24;
-                const endTime = new Date(cClass.timeRange.end).getHours()%24;
-
-                const day = DateHelpers.getDayIndex(cClass.day);
-                const duration = endTime - startTime;
-
-                // Essentially go to the next hours that the class runs for, and state that it is 'continued' from this one.
-                // Will prevent display issues on the timetable.
-                for (let i = 1; i < duration; i++) {
-                    doubleArr[startTime+i][day-1] = { continued: true };
+                // Loop through each class for this option.
+                for (const optClass of cClass) {
+                    const start = new Date(optClass.timeRange.start);
+        
+                    const startTime = start.getHours()%24;
+                    const endTime = new Date(optClass.timeRange.end).getHours()%24;
+        
+                    const day = DateHelpers.getDayIndex(optClass.day);
+                    const duration = endTime - startTime;
+        
+                    // Essentially go to the next hours that the class runs for, and state that it is 'continued' from this one.
+                    // Will prevent display issues on the timetable.
+                    for (let i = 1; i < duration; i++) {
+                        doubleArr[startTime+i][day-1] = { continued: true };
+                    }
+        
+                    // Add 'type' to optClass name in case needed.
+                    optClass.name = type;
+        
+                    // Row is start hour, and column is day.
+                    doubleArr[startTime][day-1] = optClass;
                 }
-
-                // Add 'type' to cClass name in case needed.
-                cClass.name = type;
-
-                // Row is start hour, and column is day.
-                doubleArr[startTime][day-1] = cClass;
             }
         }
 
