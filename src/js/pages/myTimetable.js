@@ -24,7 +24,35 @@ function updateTimetable() {
     const selected = getTimetableById(getSelectedTimetable());
     if (!selected) return;
 
-    console.log(selected.getTimetabledCourses());
+    const tt = selected.getTimetabledCourses();
+    
+    const tableBody = document.querySelector("#timetableTable tbody");
+    tableBody.innerHTML = "";
+
+    const FIRST_HOUR = 8;
+    const LAST_HOUR = 22;
+    
+    // Create array of all times from start to finish. E.g. [8, 9, 10, ... 21, 22]
+    const times = Array.from({ length: LAST_HOUR-(FIRST_HOUR-1) }, (_, i) => FIRST_HOUR + i);
+
+    for (const time of times) {
+        const row = document.createElement("tr");
+
+        const amOrPm = (time >= 12) ? "PM" : "AM";
+        const formattedTime = (time > 12) ? time-12 : time;
+
+        row.innerHTML = `
+            <td>${formattedTime}:00 ${amOrPm}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        `;
+
+        tableBody.appendChild(row);
+    }
+
 }
 
 const updatePage = () => {

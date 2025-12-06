@@ -198,7 +198,7 @@ class Timetable {
                 cClass.name = type;
 
                 // Row is start hour, and column is day.
-                doubleArr[startTime][day-1] = cClass.courseName;
+                doubleArr[startTime][day-1] = cClass;
             }
         }
 
