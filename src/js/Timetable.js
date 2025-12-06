@@ -179,6 +179,33 @@ class Timetable {
     }
 
     /**
+     * Get courses in a timetable format.
+     * 
+     * @returns { ClassOption[][] }
+     */
+    getTimetabledCourses() {
+        // 24 x 5 Array - 24 hours, 5 days.
+        const doubleArr = Array(24).fill(Array(5).fill(null));
+
+        for (const course of Object.values(this.courses)) {
+            for (const [type, cClass] of Object.entries(course)) {
+                const start = new Date(cClass.timeRange.start);
+
+                const startTime = start.getHours()%24;
+                const day = DateHelpers.getDayIndex(cClass.day);
+
+                // Add 'type' to cClass name in case needed.
+                cClass.name = type;
+
+                // Row is start hour, and column is day.
+                doubleArr[startTime][day-1] = cClass.courseName;
+            }
+        }
+
+        return doubleArr;
+    }
+
+    /**
      * Deserialize a regular object into a Timetable object.
      * 
      * @param { Object } obj - Object to use.

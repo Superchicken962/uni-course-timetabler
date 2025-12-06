@@ -19,15 +19,21 @@ function loadDetails() {
 
     timetableNameInp.value = selected?.name ?? "";
 }
-loadDetails();
 
 function updateTimetable() {
-    
+    const selected = getTimetableById(getSelectedTimetable());
+    if (!selected) return;
+
+    console.log(selected.getTimetabledCourses());
 }
 
+const updatePage = () => {
+    loadDetails();
+    updateTimetable();
+}
+updatePage();
 
 // This event is called when timetable is changed on header - update page when this is done.
 document.addEventListener("TimetableSelected", (ev) => {
-    loadDetails();
-    updateTimetable();
+    updatePage();
 });
