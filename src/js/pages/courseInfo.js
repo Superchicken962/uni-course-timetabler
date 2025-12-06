@@ -92,13 +92,23 @@ const htmlHelpers = {
                                                 // const existing = (uniqueDates.findIndex(d => d.time === date.time) > -1);
 
                                                 // Use class id/num for uniqueness - having changing times for same class seems too complex currently.
-                                                const existing = (uniqueDates.findIndex(d => d.id === date.id) > -1);
+                                                const existing = uniqueDates.find(d => d.id === date.id);
                                                 if (!existing) {
                                                     uniqueDates.push(date);
+                                                    continue;
+                                                }
+
+                                                // Add other day as a secondary time.
+                                                if (existing.days !== date.days && !existing.days?.includes(date.days)) {
+                                                    existing.days = [existing.days, date.days];
+                                                    existing.time = [existing.time, date.time];
+                                                    existing.timeRanges = [JSON.stringify(existing.timeRange), JSON.stringify(date.timeRange)];
+
+                                                    existing.multiple = true;
                                                 }
                                             }
 
-                                            const selectedClass = currentTimetable.getSelectedClass(course.courseInfo.courseId, cClass.classType);
+                                            const selectedClass = currentTimetable.getSelectedClass(course.courseInfo.courseId, cClass.classType)?.[0];
 
                                             return uniqueDates.map(d => {
                                                 const isSelected = (selectedClass?.id == cClass.classNumber);
@@ -111,6 +121,10 @@ const htmlHelpers = {
                                                         data-class-type="${cClass.classType}"
                                                         data-time-start="${d.timeRange?.start}"
                                                         data-time-end="${d.timeRange?.end}"
+                                                        data-multiple="${!!d.multiple}"
+                                                        data-days="${d.days?.join?.(",")}"
+                                                        data-times="${d.time?.join?.(",")}"
+                                                        data-time-ranges=\`${d.timeRanges?.join?.("%%%")}\`
                                                     >
                                                         <td>
                                                             ${cClass.classNumber}
@@ -118,8 +132,8 @@ const htmlHelpers = {
                                                         </td>
                                                         <td>${cClass.size}</td>
                                                         <td>${d.dates}</td>
-                                                        <td id="day">${d.days}</td>
-                                                        <td id="time">${d.time}</td>
+                                                        <td id="day">${Array.isArray(d.days) ? d.days.join("<br>") : d.days}</td>
+                                                        <td id="time">${Array.isArray(d.time) ? d.time.join("<br>") : d.time}</td>
                                                         <td id="instructor">${d.instructor}</td>
                                                         <td id="location">${d.location}</td>
                                                         <td>
@@ -197,23 +211,58 @@ function load(courseId) {
             // Disable the other options once this is selected.
             disableOtherAddButtons(row.parentElement);
 
-            addCourseOptionToTimetable(course, {
-                id: classNum,
-                type: classType,
-                instructor: row.querySelector("#instructor")?.textContent,
-                time: row.querySelector("#time")?.textContent,
-                day: row.querySelector("#day")?.textContent,
-                location: row.querySelector("#location")?.textContent,
-                campus: row.getAttribute("data-campus"),
-                timeRange: {
-                    start: row.getAttribute("data-time-start"),
-                    end: row.getAttribute("data-time-end")
-                },
-                courseName: course.courseInfo.courseName,
-                courseId: course.courseInfo.courseId
-            });
+            let time = row.querySelector("#time")?.textContent;
+            let day = row.querySelector("#day")?.textContent;
 
-            console.log("for some reason, keeping this log here prevents a weird bug 😭")
+            const courseOpts = [];
+
+            const isMultiple = (row.getAttribute("data-multiple") == "true");
+            // If multiple classes exist for option, add all.
+            if (isMultiple) {
+                const mTimes = row.getAttribute("data-times")?.split(",");
+                const mDays = row.getAttribute("data-days")?.split(",");
+                const mRanges = row.getAttribute("data-time-ranges")?.split("%%%");
+
+                for (let i = 0; i < mTimes.length; i++) {
+                    const _time = mTimes[i];
+                    const _day = mDays[i];
+                    const _range = JSON.parse(mRanges[i].replace("`", ""));
+
+                    courseOpts.push({
+                        id: classNum,
+                        type: classType,
+                        instructor: row.querySelector("#instructor")?.textContent,
+                        time: _time,
+                        day: _day,
+                        location: row.querySelector("#location")?.textContent,
+                        campus: row.getAttribute("data-campus"),
+                        timeRange: _range,
+                        courseName: course.courseInfo.courseName,
+                        courseId: course.courseInfo.courseId
+                    });
+                }
+            // Otherwise just push single class in.
+            } else {
+                courseOpts.push({
+                    id: classNum,
+                    type: classType,
+                    instructor: row.querySelector("#instructor")?.textContent,
+                    time: time,
+                    day: day,
+                    location: row.querySelector("#location")?.textContent,
+                    campus: row.getAttribute("data-campus"),
+                    timeRange: {
+                        start: row.getAttribute("data-time-start"),
+                        end: row.getAttribute("data-time-end")
+                    },
+                    courseName: course.courseInfo.courseName,
+                    courseId: course.courseInfo.courseId
+                });
+            }
+
+            addCourseOptionToTimetable(course, courseOpts);
+
+            console.log("for some reason, keeping this log here prevents a weird bug 😭");
             
             // Post message so other tabs can update conflicts, taking into account the newly added course.
             bc.postMessage("courseChanged");
