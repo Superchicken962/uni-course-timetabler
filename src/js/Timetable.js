@@ -19,6 +19,7 @@ class Timetable {
 
         this.name = name;
         this.courses = {};
+        this.colours = {};
     }
 
     #getAll() {
@@ -198,6 +199,7 @@ class Timetable {
                 const duration = endTime - startTime;
 
                 // Essentially go to the next hours that the class runs for, and state that it is 'continued' from this one.
+                // Will prevent display issues on the timetable.
                 for (let i = 1; i < duration; i++) {
                     doubleArr[startTime+i][day-1] = { continued: true };
                 }
@@ -222,6 +224,7 @@ class Timetable {
     static deserialize(obj) {
         const inst = new Timetable(obj.id, obj.name);
         inst.courses = obj.courses ?? {};
+        inst.colours = obj.colours ?? {};
 
         return inst;
     }

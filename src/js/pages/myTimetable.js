@@ -52,6 +52,8 @@ function updateTimetable() {
 
         tableBody.appendChild(row);
     }
+
+    updateColourOptions(selected);
 }
 
 /**
@@ -72,9 +74,45 @@ function buildCourseColumn(data) {
     const duration = end.getHours() - start.getHours();
 
     return `
-        <td rowspan="${duration}">${data.courseName}</td>
+        <td rowspan="${duration}">
+            <div class="courseTimetableBlock py-0">
+                <b>${data.courseName}</b><br>
+
+                ${formatClassType(data.type)} (Class ${data.id})<br><br>
+
+                <small>${data.location}</small><br>
+                <small>${data.instructor}</small>
+            </div>
+        </td>
     `;
 }
+
+/**
+ * Formats class type - removes any preceding titles, so it just returns "Practical" for example.
+ */
+function formatClassType(type) {
+    return type.replace("Enrolment class:", "").replace("Related class:", "").trim();
+}
+
+function updateColourOptions(timetable) {
+    return;
+    const container = document.querySelector("#colourOptions");
+
+    container.innerHTML = "<h3>Course Colours</h3>";
+    for (const [courseId, data] of Object.entries(timetable.courses)) {
+        const courseName = Object.values(data)[0].courseName;
+
+        const inputDiv = document.createElement("div");
+
+        inputDiv.innerHTML = `
+            <label for="courseColourInp:${courseId}" class="form-label">${courseName}</label>
+            <input type="color" class="form-control form-control-color" id="courseColourInp:${courseId}" value="#563d7c">
+        `;
+
+        container.appendChild(inputDiv);
+    }
+}
+
 
 const updatePage = () => {
     loadDetails();
