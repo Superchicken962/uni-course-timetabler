@@ -8,7 +8,7 @@
 <% const pages = [
     { title: "Home", href: "/" },
     { title: "My Courses", href: "/courses" },
-    { title: "Timetable", href: "/timetable" }
+    { title: "Timetable", href: "/timetable" },
 ] %>
 
 <nav class="navbar navbar-expand-md bg-body-tertiary mb-3 sticky-top">
@@ -20,7 +20,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
 
-                <% for (const page of pages) { %>
+                <% for (const page of pages.filter(p => p.align !== "right")) { %>
                     <% const isActive = (path === page.href) %>
 
                     <li class="nav-item">
@@ -29,6 +29,35 @@
                 <% } %>
                 
             </ul>
+            
+            <ul class="navbar-nav ml-auto me-3">
+                <li class="me-2">
+                    <div class="dropdown">
+                        <button class="nav-link dropdown-toggle btn btn-success" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-upload"></i> Import
+                        </button>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-upload"></i> Upload File</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-share"></i> Enter Code</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="me-2">
+                    <div class="dropdown">
+                        <button class="nav-link dropdown-toggle btn btn-success" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-download"></i> Export
+                        </button>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-download"></i> Download File</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-share"></i> Share Code</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+
             <form class="d-flex" role="input">
                 <select class="form-select" id="timetableSelect">
                     <option value="">Select Timetable...</option>
