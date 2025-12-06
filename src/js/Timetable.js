@@ -185,7 +185,7 @@ class Timetable {
      */
     getTimetabledCourses() {
         // 24 x 5 Array - 24 hours, 5 days.
-        const doubleArr = Array(24).fill(Array(5).fill(null));
+        const doubleArr = create2DArray(24, 5, null);
 
         for (const course of Object.values(this.courses)) {
             for (const [type, cClass] of Object.entries(course)) {

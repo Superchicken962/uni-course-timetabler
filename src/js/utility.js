@@ -68,3 +68,15 @@ function saveCollapsibleState(id, state) {
 
     localStorage.setItem("collapsibleStates", JSON.stringify(states));
 }
+
+/**
+ * Creates a 2-dimensional array, filled with null values or a provided value.
+ * 
+ * @param { Number } rows - Number of rows to use (height).
+ * @param { Number } cols - Number of columns to use (width).
+ * @param { any? } initialValue - Initial value to set in each spot.
+ * @returns { any[][] }
+ */
+function create2DArray(rows = 2, cols = 2, initialValue = null) {
+    return Array.from({ length: rows }, () => new Array(cols).fill(initialValue));
+}
