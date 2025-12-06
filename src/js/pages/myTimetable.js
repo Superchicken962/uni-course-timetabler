@@ -102,7 +102,7 @@ function updateColourOptions(timetable) {
 
     container.innerHTML = "<h3>Course Colours</h3>";
     for (const [courseId, data] of Object.entries(timetable.courses)) {
-        const courseName = Object.values(data)[0].courseName;
+        const courseName = Object.values(data)[0]?.courseName;
 
         const inputDiv = document.createElement("div");
         inputDiv.className = "d-flex mb-2";
