@@ -2,3 +2,13 @@
 .collapsing.no-transition {
     transition: none !important;
 }
+
+#mobileScreenWarning {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #mobileScreenWarning {
+        display: block;
+    }   
+}
