@@ -106,3 +106,37 @@ function rgbToHex(r, g, b) {
 
     return "#" + f(r)+f(g)+f(b);
 }
+
+/**
+ * Creates a file input and clicks it to prompt the user to upload a file.
+ * 
+ * @param { String } accepts - File types to accept. (e.g. '.json')
+ * @param { (fileName: string, content: string) => {} } onUpload - Callback when file is uploaded.
+ * @param { (e: ProgressEvent<FileReader>) => void } onError - Callback if error occurs.
+ */
+function getFileUpload(accepts, onUpload, onError) {
+    // Create file input, then click and handle file upload.
+    const fileInp = document.createElement("input");
+    fileInp.setAttribute("type", "file");
+    fileInp.setAttribute("accept", accepts);
+
+    fileInp.addEventListener("input", (ev) => {
+        const file = ev.target.files[0];
+        if (!file) return;
+
+        const fReader = new FileReader();
+
+        fReader.onload = (e) => {
+            onUpload?.(file.name, e.target.result);
+        }
+
+        fReader.onerror = (e) => {
+            onError?.(e);
+        }
+
+        fReader.readAsText(file);
+    });
+
+    fileInp.click();
+    fileInp.remove();
+}

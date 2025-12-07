@@ -36,3 +36,16 @@ function downloadSave(name) {
 
     return anchor;
 }
+
+/**
+ * Handle data import - showing modal and replacing or appending data. 
+ * 
+ * @param { SaveFile } data
+ */
+function handleImport(data) {
+    if (!data.courses || !data.timetables) {
+        throw new Error("Unexpected save structure");
+    }
+
+    console.log(data);
+}
