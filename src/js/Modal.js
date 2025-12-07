@@ -40,6 +40,14 @@ class Modal {
         this.#el.querySelector(".modal-footer").innerHTML = html;
     }
 
+    /**
+     * @param { String } selectors 
+     * @returns { HTMLElement | null } 
+     */
+    querySelector(selectors) {
+        this.#el.querySelector(selectors);
+    }
+
     show() {
         console.log(this.#bsModal);
         this.#bsModal.show();
