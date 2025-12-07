@@ -47,5 +47,19 @@ function handleImport(data) {
         throw new Error("Unexpected save structure");
     }
 
+    const importModal = new Modal("importModal");
+    
+    importModal.setTitle("Import Save");
+    importModal.setBody(`<p>
+        - ${Object.values(data.courses).length} Courses<br>
+        - ${Object.values(data.timetables).length} Timetables
+    </p>`);
+    importModal.setFooter(`
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Import</button>    
+    `);
+    
+    importModal.show();
+
     console.log(data);
 }
