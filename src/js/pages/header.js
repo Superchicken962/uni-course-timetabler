@@ -88,8 +88,7 @@ function updateImportExportButtons() {
                 const data = JSON.parse(content);
                 handleImport(data);
             } catch {
-                // TODO: Show error message.
-                alert("Invalid save data!");
+                new ErrorModal("Error Importing!", "Invalid Save Data.");
             }
         });
     });

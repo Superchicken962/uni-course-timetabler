@@ -100,16 +100,32 @@ function handleImport(data) {
 
     // When 'import' is clicked, collect the selected data and import.
     const importBtn = importModal.querySelector("#importBtn");
+    const checkboxes = importModal.querySelectorAll("input[type='checkbox']");
+    
+    checkboxes.forEach(e => e.addEventListener("change", (ev) => {
+        const checked = [...checkboxes].filter(c => c.checked).length;
+
+        // If there are no checkboxes checked, disable import button.
+        if (checked > 0) importBtn.removeAttribute("disabled", true);
+        else importBtn.setAttribute("disabled", true);
+    }));
+
     importBtn.addEventListener("click", () => {
         console.log("h")
     });
 }
 
 function selectAllCheckboxes(container) {
-    container.querySelectorAll("input[type='checkbox']").forEach(c => c.checked = true)
+    container.querySelectorAll("input[type='checkbox']").forEach(c => {
+        c.checked = true;
+        c.dispatchEvent(new Event("change"));
+    });
 }
 function deselectAllCheckboxes(container) {
-    container.querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false)
+    container.querySelectorAll("input[type='checkbox']").forEach(c => {
+        c.checked = false;
+        c.dispatchEvent(new Event("change"));
+    });
 }
 
 /**

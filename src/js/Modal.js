@@ -45,11 +45,38 @@ class Modal {
      * @returns { HTMLElement | null } 
      */
     querySelector(selectors) {
-        this.#el.querySelector(selectors);
+        return this.#el.querySelector(selectors);
+    }
+
+    /**
+     * @param { String } selectors 
+     * @returns { NodeListOf<HTMLElement> | null } 
+     */
+    querySelectorAll(selectors) {
+        return this.#el.querySelectorAll(selectors);
     }
 
     show() {
         console.log(this.#bsModal);
         this.#bsModal.show();
+    }
+}
+
+class ErrorModal extends Modal {
+    /**
+     * Error Modal. Opens automatically when created.
+     * 
+     * @param { String } title - Error name / title. 
+     * @param { String } description - Error message / description.
+     * @param { Boolean? } startHidden - Should the modal start hidden? (def. false)
+     */
+    constructor(name, message, startHidden = false) {
+        super("ErrorBox");
+        this.setTitle(name);
+        this.setBody(`<p>${message}</p>`);
+
+        this.querySelector(".modal-footer")?.remove();
+
+        if (!startHidden) this.show();
     }
 }
