@@ -33,11 +33,31 @@ class Modal {
     }
 
     setBody(html) {
-        this.#el.querySelector(".modal-body").innerHTML = html;
+        const body = this.#el.querySelector(".modal-body");
+        if (!body) return;
+
+        body.innerHTML = html;
     }
 
     setFooter(html) {
-        this.#el.querySelector(".modal-footer").innerHTML = html;
+        const footer = this.#el.querySelector(".modal-footer");
+        if (!footer) return;
+        
+        footer.innerHTML = html;
+    }
+
+    /**
+     * Completely removes the body element. Cannot be undone.
+     */
+    removeBody() {
+        this.#el.querySelector(".modal-body")?.remove();
+    }
+
+    /**
+     * Completely removes the footer element. Cannot be undone.
+     */
+    removeFooter() {
+        this.#el.querySelector(".modal-footer")?.remove();
     }
 
     /**
@@ -57,8 +77,11 @@ class Modal {
     }
 
     show() {
-        console.log(this.#bsModal);
         this.#bsModal.show();
+    }
+
+    close() {
+        this.#bsModal.hide();
     }
 }
 
@@ -73,9 +96,15 @@ class ErrorModal extends Modal {
     constructor(name, message, startHidden = false) {
         super("ErrorBox");
         this.setTitle(name);
+
         this.setBody(`<p>${message}</p>`);
 
-        this.querySelector(".modal-footer")?.remove();
+        // If no message is provided, remove the body as nothing will be shown anyway.
+        if (!message) {
+            this.removeBody();
+        }
+
+        this.removeFooter();
 
         if (!startHidden) this.show();
     }

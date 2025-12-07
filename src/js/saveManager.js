@@ -51,7 +51,7 @@ function handleImport(data) {
     
     importModal.setTitle("Import Save");
     importModal.setBody(`
-        <div class="mb-3">
+        <div class="mb-3" id="courses">
             <p class="lead">${Object.values(data.courses).length} Courses</p>
             <hr>
 
@@ -70,7 +70,7 @@ function handleImport(data) {
             <a class="link-danger" href="#" onclick="deselectAllCheckboxes(this.parentElement)">Deselect all</a>
         </div>
 
-        <div class="mb-2">
+        <div class="mb-2" id="timetables">
             <p class="lead">${Object.values(data.timetables).length} Timetables</p>
             <hr>
             
@@ -102,6 +102,7 @@ function handleImport(data) {
     const importBtn = importModal.querySelector("#importBtn");
     const checkboxes = importModal.querySelectorAll("input[type='checkbox']");
     
+    // When checkboxes are checked, check the amount that are checked and if it's none, disable button. 
     checkboxes.forEach(e => e.addEventListener("change", (ev) => {
         const checked = [...checkboxes].filter(c => c.checked).length;
 
@@ -111,7 +112,42 @@ function handleImport(data) {
     }));
 
     importBtn.addEventListener("click", () => {
-        console.log("h")
+        importBtn.setAttribute("disabled", true);
+
+        const getSelected = (containerId, data) => {
+            // Filter checkboxes to checked ones, and return array of ids.
+            const checkboxes = [...importModal.querySelectorAll(`#${containerId} input[type='checkbox']`)]
+                .filter(e => e.checked)
+                .map(e => e.id);
+
+            // Filter object entries by checked courses - filter object values, then recreate object from entries using Map.
+            const selectedData = Object.fromEntries(new Map(
+                Object.entries(data).filter(([id]) => checkboxes.includes(id))
+            ));
+
+            return selectedData;
+        }
+
+        const selectedCourses = getSelected("courses", data.courses);
+        const selectedTimetables = getSelected("timetables", data.timetables);
+
+        // Now import the selected courses and timetables.
+        importData({ courses: selectedCourses, timetables: selectedTimetables });
+
+        // Close import modal, and open a new one for saying it was a success.
+        importModal.close();
+
+        const successModal = new Modal("importSuccess");
+
+        successModal.setTitle("Import Successful");
+        successModal.setBody(`
+            Successfully imported ${Object.values(selectedCourses).length} courses and ${Object.values(selectedTimetables).length} timetables!
+        `);
+        successModal.setFooter(`
+            <p class="text-muted">You may need to refresh the page to see changes.</p>
+        `);
+
+        successModal.show();
     });
 }
 
@@ -137,6 +173,7 @@ function deselectAllCheckboxes(container) {
 function importData(data) {
     const current = exportSave();
     
+    // Apply new imported data to the existing save.
     for (const [id, course] of Object.entries(data?.courses || {})) {
         current.courses[id] = course;
     }
@@ -144,6 +181,10 @@ function importData(data) {
     for (const [id, timetable] of Object.entries(data?.timetables || {})) {
         current.timetables[id] = timetable;
     }
+
+    // Resave the data.
+    localStorage.setItem("myCourses", JSON.stringify(current.courses));
+    localStorage.setItem("myTimetables", JSON.stringify(current.timetables));
 
     return current;
 }
