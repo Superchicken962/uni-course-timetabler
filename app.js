@@ -35,6 +35,10 @@ app.get("/timetable", (req, res) => {
     res.render("timetable.html");
 });
 
+app.get("/share", (req, res) => {
+    res.render("shareData.html");
+});
+
 app.use("/api", require("./api"));
 
 

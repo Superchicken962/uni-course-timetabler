@@ -74,3 +74,24 @@ function createDefaultTimetable() {
     const newTt = new Timetable(null, "Default Timetable").save();
     setSelectedTimetable(newTt.id);
 }
+
+function updateImportExportButtons() {
+    const exportBtn = document.querySelector("#exportFileBtn");
+    exportBtn.addEventListener("click", () => {
+        // downloadSave("timetabler.json");
+        handleExport();
+    });
+
+    const importBtn = document.querySelector("#importFileBtn");
+    importBtn.addEventListener("click", () => {
+        getFileUpload(".json", (name, content) => {
+            try {
+                const data = JSON.parse(content);
+                handleImport(data);
+            } catch {
+                new ErrorModal("Error Importing!", "Invalid Save Data.");
+            }
+        });
+    });
+}
+updateImportExportButtons();
