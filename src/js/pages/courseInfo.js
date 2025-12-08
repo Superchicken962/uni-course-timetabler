@@ -103,6 +103,7 @@ const htmlHelpers = {
                                                     existing.days = [existing.days, date.days];
                                                     existing.time = [existing.time, date.time];
                                                     existing.timeRanges = [JSON.stringify(existing.timeRange), JSON.stringify(date.timeRange)];
+                                                    existing.allDates = [existing, date];
 
                                                     existing.multiple = true;
                                                 }
@@ -112,7 +113,11 @@ const htmlHelpers = {
 
                                             return uniqueDates.map(d => {
                                                 const isSelected = (selectedClass?.id == cClass.classNumber);
-                                                const hasConflict = currentTimetable.hasConflict(d);
+
+                                                // If there is more than one time, check through all and if at least one has conflict.
+                                                const hasConflict = (d.allDates) ? 
+                                                    d.allDates.map(t => currentTimetable.hasConflict(t)).filter(t => t != false)?.[0] || false : 
+                                                    currentTimetable.hasConflict(d);
 
                                                 return `
                                                     <tr 
