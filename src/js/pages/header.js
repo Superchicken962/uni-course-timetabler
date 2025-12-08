@@ -78,7 +78,8 @@ function createDefaultTimetable() {
 function updateImportExportButtons() {
     const exportBtn = document.querySelector("#exportFileBtn");
     exportBtn.addEventListener("click", () => {
-        downloadSave("timetabler.json");
+        // downloadSave("timetabler.json");
+        handleExport();
     });
 
     const importBtn = document.querySelector("#importFileBtn");
